@@ -1,5 +1,6 @@
 package hello.springmvc.basic.requestmapping;
 
+import hello.springmvc.basic.HelloData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +41,9 @@ public class MappingController {
     }
 
     @GetMapping("/mapping/users/{userId}/orders/{orderId}")
-    public String mappingPath(@PathVariable String userId, @PathVariable Long orderId){
+    public String mappingPath(@PathVariable String userId, @PathVariable Long orderId) {
         log.info("mappingPath userId={}, orderId = {}", userId, orderId);
-        return "OK userId " + userId + "orderId: " + orderId ;
+        return "OK userId " + userId + "orderId: " + orderId;
     }
 
     /**
@@ -73,7 +74,7 @@ public class MappingController {
     }
 
     /**
-     *Content- Type 헤더 기반 추가 매핑 MediaType
+     * Content- Type 헤더 기반 추가 매핑 MediaType
      * consumes="application/json"
      * consumes="!application/json"
      * consumes="application/*"
@@ -99,4 +100,40 @@ public class MappingController {
         log.info("mapping-produce");
         return "OK mapping-produce";
     }
+
+    /**
+     * @ModelAttribute @ModelAttribute 사용
+     * model.addAttribute(helloData) 코드도 함께 자동 적용됨.
+     */
+    @ResponseBody
+    @RequestMapping("/model-attribute-v1")
+    public String modelAttributeV1(@ModelAttribute HelloData helloData) {
+        log.info("username={}, age={}", helloData.getUsername(), helloData.getAge());
+        return "OK";
+    }
+
+    /**
+     * @ModelAttribute @ModelAttribute 생략 가능.
+     * !ModelAttribute 와 RequestParam 구분 방법!
+     * String, int 같은 단순 타입은 @RequestParam
+     * argument resolver 로 지정해둔 타입 외에는 @ModelAttribute
+     */
+    @ResponseBody
+    @RequestMapping
+    public String modelAttributeV2(HelloData helloData) {
+        log.info("username={}, age={}", helloData.getUsername(), helloData.getAge());
+        return "OK";
+    }
 }
+
+//    /**
+//     * @ModelAttribute 생략 가능
+//     * String, int 같은 단순 타입 = @RequestParam
+//     * argument resolver 로 지정해둔 타입 외 = @ModelAttribute
+//     */
+//    @ResponseBody
+//    @RequestMapping("/model-attribute-v2")
+//    public String modelAttributeV2(HelloData helloData) {
+//        log.info("username={}, age={}", helloData.getUsername(), helloData.getAge());
+//        return "ok";
+//    }
